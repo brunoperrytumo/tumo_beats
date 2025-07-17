@@ -1,9 +1,15 @@
 window.onload = async function() {
 
+    // Carregar o service worker
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js");
+    }
+
+    console.log("kjahwd")
+
     //Carregar dados da internet (data.json)
     let request = await fetch("data.json");
     let audioData = await request.json();
-   
 
     // Variaveis de elementos
     let title = document.querySelector("#title");
@@ -18,12 +24,6 @@ window.onload = async function() {
 
     let audio = document.querySelector("audio");
     let currentMusic = 0;
-    console.log(audioData[currentMusic]);
-   
-
-
-
-
 
     // Funções
     function changeTitle(value) {
@@ -34,7 +34,11 @@ window.onload = async function() {
     }
 
     previousButton.onclick = function() {
-        console.log("previous button clicked");
+        currentMusic--;
+        if(currentMusic < 0) {
+            currentMusic = audioData.length - 1;
+        }
+        playAudio();
     }
     playButton.onclick = function() {
 
@@ -45,26 +49,46 @@ window.onload = async function() {
         }
     }
     nextButton.onclick = function() {
-        console.log("next button clicked");
+        currentMusic++;
+        if(currentMusic >= audioData.length) {
+            currentMusic = 0;
+        }
+        playAudio();
     }
 
     scrubInput.querySelector("input").oninput = function(event) {
         let bar = scrubInput.querySelector(".range-bar");
-        updateInputBar(event.target.value, bar);
+        let value = event.target.value;
+        scrubAudio(value);
+        updateInputBar(value, bar);
     }
 
    volumeInput.querySelector("input").oninput = function(event) {
         let bar = volumeInput.querySelector(".range-bar");
-        updateInputBar(event.target.value, bar);
+        let value = event.target.value;
+        audio.volume = value / 100;
+        updateInputBar(value, bar);
     }
 
     fileInput.oninput = function() {
-        console.log("aqui!");
+        
+        let file = Array.from(fileInput.files)[0];
+        let reader = new FileReader();
+        reader.onload = function() {
+            audioData.push({
+                title: file.name,
+                url: reader.result
+            });
+        }
+        if (file) {
+            reader.readAsDataURL(file);
+        }
     }
 
 
     function playAudio() {
         audio.src = audioData[currentMusic].url;
+        changeTitle(audioData[currentMusic].title);
         audio.play();
     }
     function pauseAudio() {
@@ -83,9 +107,18 @@ window.onload = async function() {
         pauseIcon.style.display = "none";
     }
 
+    audio.ontimeupdate = function() {
 
-    changeTitle("Bruno");
-    console.log(title);
+        let bar = scrubInput.querySelector(".range-bar");
+        let value = (audio.currentTime / audio.duration) * 100;
+        updateInputBar(value, bar);
+    }
+
+    function scrubAudio(value) {
+
+        if(!audio.src) return;
+        audio.currentTime = audio.duration * (value / 100);
+    }
 }
 
 
