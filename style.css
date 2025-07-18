@@ -78,9 +78,7 @@ button:active {
 #play-button {
     grid-area: playpause;
 }
-#icon-play {
 
-}
 #icon-pause {
     display: none;
 }
