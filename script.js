@@ -1,11 +1,9 @@
 window.onload = async function() {
 
     // Carregar o service worker
-    if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("service-worker.js");
-    }
-
-    console.log("kjahwd")
+    // if ("serviceWorker" in navigator) {
+    //     navigator.serviceWorker.register("service-worker.js");
+    // }
 
     //Carregar dados da internet (data.json)
     let request = await fetch("data.json");
