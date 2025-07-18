@@ -86,6 +86,13 @@ button:active {
     grid-area: next;
 }
 
+
+#volume-input .container {
+display:flex;
+position: relative;
+flex: 1;
+width: 100%;
+}
 #volume-input {
     display: flex;
     position: relative;

@@ -1,9 +1,9 @@
 window.onload = async function() {
 
     // Carregar o service worker
-    // if ("serviceWorker" in navigator) {
-    //     navigator.serviceWorker.register("service-worker.js");
-    // }
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js");
+    }
 
     //Carregar dados da internet (data.json)
     let request = await fetch("data.json");
@@ -21,7 +21,9 @@ window.onload = async function() {
     let fileInput = document.querySelector("#file-input");
 
     let audio = document.querySelector("audio");
+    audio.src = audioData[0].url;
     let currentMusic = 0;
+    let pauseTime = 0;
 
     // Funções
     function changeTitle(value) {
@@ -42,7 +44,10 @@ window.onload = async function() {
 
         if(audio.paused) {
             playAudio();
+            audio.currentTime = pauseTime;
+            pauseTime = 0;
         } else {
+            pauseTime = audio.currentTime;
             pauseAudio();
         }
     }
@@ -96,12 +101,12 @@ window.onload = async function() {
         let playIcon = document.querySelector("#icon-play");
         let pauseIcon = document.querySelector("#icon-pause");
         playIcon.style.display = "none";
-        pauseIcon.style.display = "block";
+        pauseIcon.style.display = "initial";
     }
     audio.onpause = function() {
         let playIcon = document.querySelector("#icon-play");
         let pauseIcon = document.querySelector("#icon-pause");
-        playIcon.style.display = "block";
+        playIcon.style.display = "initial";
         pauseIcon.style.display = "none";
     }
 
@@ -110,6 +115,10 @@ window.onload = async function() {
         let bar = scrubInput.querySelector(".range-bar");
         let value = (audio.currentTime / audio.duration) * 100;
         updateInputBar(value, bar);
+    }
+
+    audio.onended = function() {
+        nextButton.click();
     }
 
     function scrubAudio(value) {
