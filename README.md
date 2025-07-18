@@ -39,3 +39,5 @@ Atualizar para:
 const VERSION = "1.1.0";
 ```
 
+Nota: É importante alterar a versão par desta forma forçar o update do cache.
+
